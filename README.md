@@ -4,7 +4,7 @@ A Speccadex közös backendje, amelyet a webes, az asztali és a mobil alkalmaz�
 
 ## Tech stack
 - NestJS (Node.js / TypeScript)
-- Prism ORM
+- Prisma ORM
 - PostgreSQL
 - Swagger / OpenAPI dokumentáció
 - JWT + Passport.js autentikáció

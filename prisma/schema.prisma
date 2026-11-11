@@ -1,0 +1,250 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model build_fans {
+  id       Int    @id @default(autoincrement())
+  build_id Int
+  fan_id   Int
+  quantity Int?   @default(1)
+  builds   builds @relation(fields: [build_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  fan      fan    @relation(fields: [fan_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model build_rams {
+  id       Int    @id @default(autoincrement())
+  build_id Int
+  ram_id   Int
+  quantity Int?   @default(1)
+  builds   builds @relation(fields: [build_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  ram      ram    @relation(fields: [ram_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model build_storages {
+  id         Int     @id @default(autoincrement())
+  build_id   Int
+  storage_id Int
+  quantity   Int?    @default(1)
+  builds     builds  @relation(fields: [build_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  storage    storage @relation(fields: [storage_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model builds {
+  id             Int              @id @default(autoincrement())
+  user_id        Int
+  title          String           @db.VarChar
+  description    String?
+  is_public      Boolean?         @default(true)
+  deleted        Boolean?         @default(false)
+  mobo_id        Int?
+  cpu_id         Int?
+  gpu_id         Int?
+  cpu_cooler_id  Int?
+  case_id        Int?
+  psu_id         Int?
+  created_at     DateTime?        @default(now()) @db.Timestamp(6)
+  updated_at     DateTime?        @default(now()) @db.Timestamp(6)
+  build_fans     build_fans[]
+  build_rams     build_rams[]
+  build_storages build_storages[]
+  Renamedcase    Renamedcase?     @relation(fields: [case_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  cpu_cooler     cpu_cooler?      @relation(fields: [cpu_cooler_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  cpu            cpu?             @relation(fields: [cpu_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  gpu            gpu?             @relation(fields: [gpu_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  mobo           mobo?            @relation(fields: [mobo_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  psu            psu?             @relation(fields: [psu_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users          users            @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  posts          posts[]
+}
+
+/// This model has been renamed to 'Renamedcase' during introspection, because the original name 'case' is reserved.
+model Renamedcase {
+  id                   Int      @id @default(autoincrement())
+  name                 String   @db.VarChar
+  new_price            Int?
+  used_price           Int?
+  manufacturer         String   @db.VarChar
+  form_factor          String   @db.VarChar
+  max_gpu_length_mm    Int
+  max_cooler_height_mm Int
+  max_aio_radiator_mm  Int?
+  has_tempered_glass   Boolean? @default(true)
+  deleted              Boolean? @default(false)
+  builds               builds[]
+
+  @@map("case")
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model comments {
+  id         Int       @id @default(autoincrement())
+  post_id    Int
+  user_id    Int
+  content    String
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  deleted    Boolean?  @default(false)
+  posts      posts     @relation(fields: [post_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users      users     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model cpu {
+  id                  Int      @id @default(autoincrement())
+  name                String   @db.VarChar
+  new_price           Int?
+  used_price          Int?
+  manufacturer        String   @db.VarChar
+  family              String   @db.VarChar
+  architecture        String   @db.VarChar
+  series              String   @db.VarChar
+  socket              String   @db.VarChar
+  tdp_watts           Int
+  core_count          Int?
+  thread_count        Int?
+  integrated_graphics Boolean? @default(false)
+  deleted             Boolean? @default(false)
+  builds              builds[]
+}
+
+model cpu_cooler {
+  id                Int      @id @default(autoincrement())
+  name              String   @db.VarChar
+  new_price         Int?
+  used_price        Int?
+  manufacturer      String   @db.VarChar
+  fan_count         Int?
+  supported_sockets String   @db.VarChar
+  type              String   @db.VarChar
+  height_mm         Int?
+  radiator_size_mm  Int?
+  deleted           Boolean? @default(false)
+  builds            builds[]
+}
+
+model fan {
+  id           Int          @id @default(autoincrement())
+  name         String       @db.VarChar
+  new_price    Int?
+  used_price   Int?
+  manufacturer String       @db.VarChar
+  size_mm      Int
+  is_rgb       Boolean?     @default(false)
+  deleted      Boolean?     @default(false)
+  build_fans   build_fans[]
+}
+
+model gpu {
+  id                     Int      @id @default(autoincrement())
+  name                   String   @db.VarChar
+  new_price              Int?
+  used_price             Int?
+  pcie_version           Int?
+  manufacturer           String   @db.VarChar
+  family                 String   @db.VarChar
+  architecture           String   @db.VarChar
+  series                 String   @db.VarChar
+  length_mm              Int
+  tdp_watts              Int
+  power_connector_type   String?  @db.VarChar
+  power_connector_amount Int?
+  deleted                Boolean? @default(false)
+  builds                 builds[]
+}
+
+model mobo {
+  id                Int      @id @default(autoincrement())
+  name              String   @db.VarChar
+  new_price         Int?
+  used_price        Int?
+  manufacturer      String   @db.VarChar
+  socket            String   @db.VarChar
+  form_factor       String   @db.VarChar
+  ddr_generation    Int
+  ram_slots         Int
+  max_ram_speed_mhz Int?
+  pcie_version      Int?
+  m2_slots_count    Int?     @default(1)
+  sata_ports_count  Int?     @default(4)
+  deleted           Boolean? @default(false)
+  builds            builds[]
+}
+
+/// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+model posts {
+  id         Int        @id @default(autoincrement())
+  user_id    Int
+  build_id   Int?
+  title      String     @db.VarChar
+  content    String
+  created_at DateTime?  @default(now()) @db.Timestamp(6)
+  updated_at DateTime?  @default(now()) @db.Timestamp(6)
+  deleted    Boolean?   @default(false)
+  comments   comments[]
+  builds     builds?    @relation(fields: [build_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users      users      @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model psu {
+  id                     Int      @id @default(autoincrement())
+  name                   String   @db.VarChar
+  new_price              Int?
+  used_price             Int?
+  manufacturer           String   @db.VarChar
+  wattage                Int
+  efficiency_rating      String?  @db.VarChar
+  modularity             String?  @db.VarChar
+  pcie_6plus2_connectors Int?
+  vhpwr_connectors       Int?     @map("12vhpwr_connectors")
+  deleted                Boolean? @default(false)
+  builds                 builds[]
+}
+
+model ram {
+  id                 Int          @id @default(autoincrement())
+  name               String       @db.VarChar
+  new_price          Int?
+  used_price         Int?
+  manufacturer       String       @db.VarChar
+  ddr_generation     Int
+  module_capacity_gb Int
+  module_count       Int
+  speed_mhz          Int
+  cas_latency        Int?
+  deleted            Boolean?     @default(false)
+  build_rams         build_rams[]
+}
+
+model storage {
+  id             Int              @id @default(autoincrement())
+  name           String           @db.VarChar
+  new_price      Int?
+  used_price     Int?
+  manufacturer   String           @db.VarChar
+  form_factor    String           @db.VarChar
+  interface_type String           @db.VarChar
+  capacity_gb    Int
+  type           String           @db.VarChar
+  deleted        Boolean?         @default(false)
+  build_storages build_storages[]
+}
+
+model users {
+  id            Int        @id @default(autoincrement())
+  username      String     @unique @db.VarChar
+  email         String     @unique @db.VarChar
+  password_hash String     @db.VarChar
+  role          String?    @default("user") @db.VarChar
+  created_at    DateTime?  @default(now()) @db.Timestamp(6)
+  deleted       Boolean?   @default(false)
+  builds        builds[]
+  comments      comments[]
+  posts         posts[]
+}

@@ -7,7 +7,7 @@ A Speccadex közös backendje, amelyet a webes, az asztali és a mobil alkalmaz�
 - Drizzle ORM
 - PostgreSQL
 - Swagger / OpenAPI dokumentáció
-- JWT + Passport.js autentikáció
+- Better-auth autentikáció
 
 ## Felelősök
 Közös munka (Tóth Kristóf Antal, Vincze Dominik, Papp-hegyi Ákos). Az adatbázis és a backend tervezése közösen történik.

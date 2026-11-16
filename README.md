@@ -19,3 +19,5 @@ Közös munka (Tóth Kristóf Antal, Vincze Dominik, Papp-hegyi Ákos). Az adatb
 
 ## Státusz
 Tervezés alatt. Az adatbázis-séma véglegesítése folyamatban van.
+
+test
